@@ -218,11 +218,11 @@ def evaluate_trading_performance(returns, positions):
         'turnover': calculate_turnover(positions)
     }
     
- return pd.Series(metrics)
+    return pd.Series(metrics)
 
 class RiskManager:
- def __init__(self, max_position=1.0, max_drawdown=0.02):
-   """
+    def __init__(self, max_position=1.0, max_drawdown=0.02):
+        """
         Initialize risk parameters.
         
         Parameters:
@@ -231,25 +231,25 @@ class RiskManager:
             Maximum allowed position size as fraction of equity
         max_drawdown : float
             Maximum allowed drawdown before trading stops
-   """
-   self.max_position = max_position
-   self.max_drawdown = max_drawdown
-   self.current_drawdown = 0
+        """
+        self.max_position = max_position
+        self.max_drawdown = max_drawdown
+        self.current_drawdown = 0
  
- def validate_trade(self, prediction, current_position, current_equity):
-   """
+    def validate_trade(self, prediction, current_position, current_equity):
+        """
         Validate and size trades based on risk parameters.
         
         Returns:
         --------
         float
             Position size as fraction of equity
-   """
-   if self.current_drawdown > self.max_drawdown:
+        """
+        if self.current_drawdown > self.max_drawdown:
             return 0  # Stop trading when drawdown limit reached
    
         position_size = self.calculate_position_size(prediction, current_equity)
-   return min(position_size, self.max_position)
+        return min(position_size, self.max_position)
     
     def calculate_position_size(self, prediction, current_equity):
         """Calculate position size based on model confidence."""
@@ -391,7 +391,7 @@ def main():
     axes[1, 1].set_xlabel('Fold', fontsize=11)
     axes[1, 1].set_ylabel('Accuracy', fontsize=11)
     axes[1, 1].legend()
-        plt.tight_layout()
+    plt.tight_layout()
     plt.savefig('financial_timeseries_classification.png', dpi=300)
     plt.close()
     logger.info("   Saved visualization to 'financial_timeseries_classification.png'")
