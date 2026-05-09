@@ -1,0 +1,19 @@
+data:
+  seed: 42
+  input_file: 2001-2025 Net_generation_United_States_all_sectors_monthly.csv
+  freq: MS
+  n_splits: 5
+model:
+  n_estimators: 100
+  alpha: 0.5
+  max_iter: 1000
+  season: 12
+  max_lag: 12
+output:
+  figures_dir: images
+  figure_format: png
+  figure_dpi: 300
+  figsize:
+  - 9
+  - 4
+  font_family: serif

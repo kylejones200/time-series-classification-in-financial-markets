@@ -9,6 +9,12 @@ from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, roc_auc_score
 
+import logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 np.random.seed(42)
 plt.rcParams.update({'font.family': 'serif','axes.spines.top': False,'axes.spines.right': False,'axes.linewidth': 0.8})
 
@@ -22,6 +28,27 @@ class Config:
     n_splits: int = 5
     season: int = 12
     max_lag: int = 12
+
+def load_config(config_path=None) -> 'Config':
+    """Build Config from config.yaml, falling back to dataclass defaults."""
+    if config_path is None:
+        config_path = Path(__file__).parent / 'config.yaml'
+    if not config_path.exists():
+        return Config()
+    with open(config_path) as _f:
+        import yaml as _yaml
+        raw = _yaml.safe_load(_f) or {}
+    _d = raw.get('data', {})
+    _m = raw.get('model', {})
+    _o = raw.get('output', {})
+    return Config(
+        csv_path=_d.get('input_file', '2001-2025 Net_generation_United_States_all_sectors_monthly.csv'),
+        freq=_d.get('freq', 'MS'),
+        n_splits=_d.get('n_splits', 5),
+        season=_m.get('season', 12),
+        max_lag=_m.get('max_lag', 12),
+    )
+
 
 
 def load_series(cfg: Config) -> pd.Series:
@@ -77,11 +104,11 @@ def chrono_classification(df: pd.DataFrame, cfg: Config):
 
 
 def main():
-    cfg = Config()
+    cfg = load_config()
     s = load_series(cfg)
     df = build_supervised(s, cfg.max_lag, cfg.season)
     acc, auc = chrono_classification(df, cfg)
-    print(f"Up/Down classification — Accuracy: {acc:.4f}, AUC: {auc:.4f}")
+    logger.info(f"Up/Down classification — Accuracy: {acc:.4f}, AUC: {auc:.4f}")
 
     # Simple visualization of last 3 years with predicted direction baseline (seasonal naive)
     tail = s.tail(36)

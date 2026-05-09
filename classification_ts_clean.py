@@ -5,11 +5,32 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 import seaborn as sns
 
+import logging
+import yaml
+
+from pathlib import Path
+
+
+def load_config(config_path=None):
+    """Load configuration from YAML file."""
+    if config_path is None:
+        config_path = Path(__file__).parent / 'config.yaml'
+    if not config_path.exists():
+        return {}
+    with open(config_path) as _f:
+        import yaml as _yaml
+        return _yaml.safe_load(_f) or {}
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 # Configuration
 plt.rcParams['axes.spines.top'] = False
 plt.rcParams['axes.spines.right'] = False
 plt.rcParams['figure.facecolor'] = 'white'
-np.random.seed(42)
+np.random.seed(config.get('data', {}).get('seed', 42))
 
 # Generate synthetic time series (random walk with drift)
 n_samples = 500
@@ -54,15 +75,15 @@ y_pred_proba = clf.predict_proba(X_test)[:, 1]
 
 # Metrics
 acc = accuracy_score(y_test, y_pred)
-print(f"Accuracy: {acc:.3f}")
-print(f"\nTrain samples: {len(X_train)} | Test samples: {len(X_test)}")
-print(f"Class distribution - Train: {y_train.value_counts().to_dict()}")
-print(f"Class distribution - Test:  {y_test.value_counts().to_dict()}\n")
-print("Classification Report:")
-print(classification_report(y_test, y_pred, target_names=['Down', 'Up']))
+logger.info(f"Accuracy: {acc:.3f}")
+logger.info(f"\nTrain samples: {len(X_train)} | Test samples: {len(X_test)}")
+logger.info(f"Class distribution - Train: {y_train.value_counts().to_dict()}")
+logger.info(f"Class distribution - Test:  {y_test.value_counts().to_dict()}\n")
+logger.info("Classification Report:")
+logger.info(classification_report(y_test, y_pred, target_names=['Down', 'Up']))
 
 # Visualization
-fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+fig, axes = plt.subplots(2, 2, figsize=tuple(config.get('output', {}).get('figsize', [14, 10])))
 
 # Original time series with train/test split
 axes[0, 0].plot(df.index[:split_idx], df['value'][:split_idx], 
@@ -129,6 +150,6 @@ plt.tight_layout()
 plt.savefig('classification_probabilities.png', dpi=300, bbox_inches='tight')
 plt.show()
 
-print(f"\nSaved: classification_ts_analysis.png")
-print(f"Saved: classification_probabilities.png")
+logger.info(f"\nSaved: classification_ts_analysis.png")
+logger.info(f"Saved: classification_probabilities.png")
 
