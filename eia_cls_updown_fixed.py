@@ -103,7 +103,7 @@ def chrono_classification(df: pd.DataFrame, cfg: Config):
     return float(np.mean(accs)), (float(np.mean(aucs)) if aucs else np.nan)
 
 
-def main():
+def main(plot: bool = False):
     cfg = load_config()
     s = load_series(cfg)
     df = build_supervised(s, cfg.max_lag, cfg.season)
@@ -112,10 +112,11 @@ def main():
 
     # Simple visualization of last 3 years with predicted direction baseline (seasonal naive)
     tail = s.tail(36)
-    plt.figure(figsize=(9,4))
-    plt.plot(tail.index, tail.values, label='EIA')
-    plt.legend()
-    save_fig('eia_cls_updown.png')
+    if plot:
+        plt.figure(figsize=(9,4))
+        plt.plot(tail.index, tail.values, label='EIA')
+        plt.legend()
+        save_fig('eia_cls_updown.png')
 
 if __name__ == '__main__':
     main()

@@ -294,7 +294,7 @@ def create_market_state_labels(df, window=20):
     return labels
 
 
-def main():
+def main(plot: bool = False):
     """Run complete example."""
     logger.info("=" * 60)
     logger.info("Financial Time Series Classification")
@@ -351,49 +351,50 @@ def main():
     
     # Visualizations
     logger.info("\n6. Creating visualizations...")
-    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    if plot:
+        fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     
     # Price series with labels
-    axes[0, 0].plot(df['timestamp'], df['close'], alpha=0.7, linewidth=1)
-    bullish_periods = df[df['label'] == 1]
-    axes[0, 0].scatter(bullish_periods['timestamp'], bullish_periods['close'],
-                      c='green', alpha=0.3, s=10, label='Bullish')
-    bearish_periods = df[df['label'] == 0]
-    axes[0, 0].scatter(bearish_periods['timestamp'], bearish_periods['close'],
-                      c='red', alpha=0.3, s=10, label='Bearish')
-    axes[0, 0].set_title('Price Series with Market States', fontsize=12)
-    axes[0, 0].set_xlabel('Date', fontsize=11)
-    axes[0, 0].set_ylabel('Price', fontsize=11)
-    axes[0, 0].legend()
+        axes[0, 0].plot(df['timestamp'], df['close'], alpha=0.7, linewidth=1)
+        bullish_periods = df[df['label'] == 1]
+        axes[0, 0].scatter(bullish_periods['timestamp'], bullish_periods['close'],
+                          c='green', alpha=0.3, s=10, label='Bullish')
+        bearish_periods = df[df['label'] == 0]
+        axes[0, 0].scatter(bearish_periods['timestamp'], bearish_periods['close'],
+                          c='red', alpha=0.3, s=10, label='Bearish')
+        axes[0, 0].set_title('Price Series with Market States', fontsize=12)
+        axes[0, 0].set_xlabel('Date', fontsize=11)
+        axes[0, 0].set_ylabel('Price', fontsize=11)
+        axes[0, 0].legend()
         # Confusion matrix
-    cm = confusion_matrix(y[test_idx], y_pred)
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=axes[0, 1],
-                xticklabels=['Bearish', 'Bullish'],
-                yticklabels=['Bearish', 'Bullish'])
-    axes[0, 1].set_title('Confusion Matrix', fontsize=12)
-    axes[0, 1].set_ylabel('True Label', fontsize=11)
-    axes[0, 1].set_xlabel('Predicted Label', fontsize=11)
+        cm = confusion_matrix(y[test_idx], y_pred)
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=axes[0, 1],
+                    xticklabels=['Bearish', 'Bullish'],
+                    yticklabels=['Bearish', 'Bullish'])
+        axes[0, 1].set_title('Confusion Matrix', fontsize=12)
+        axes[0, 1].set_ylabel('True Label', fontsize=11)
+        axes[0, 1].set_xlabel('Predicted Label', fontsize=11)
     
     # Feature importance
-    feature_names = features_df.columns
-    importances = model.feature_importances_
-    indices = np.argsort(importances)[::-1][:10]
-    axes[1, 0].barh(range(len(indices)), importances[indices])
-    axes[1, 0].set_yticks(range(len(indices)))
-    axes[1, 0].set_yticklabels([feature_names[i] for i in indices])
-    axes[1, 0].set_title('Top 10 Feature Importances', fontsize=12)
-    axes[1, 0].set_xlabel('Importance', fontsize=11)
+        feature_names = features_df.columns
+        importances = model.feature_importances_
+        indices = np.argsort(importances)[::-1][:10]
+        axes[1, 0].barh(range(len(indices)), importances[indices])
+        axes[1, 0].set_yticks(range(len(indices)))
+        axes[1, 0].set_yticklabels([feature_names[i] for i in indices])
+        axes[1, 0].set_title('Top 10 Feature Importances', fontsize=12)
+        axes[1, 0].set_xlabel('Importance', fontsize=11)
         # Cross-validation scores
-    axes[1, 1].plot(range(1, len(scores) + 1), scores, 'o-', linewidth=2)
-    axes[1, 1].axhline(y=np.mean(scores), color='r', linestyle='--',
-                      label=f'Mean: {np.mean(scores):.4f}')
-    axes[1, 1].set_title('Cross-Validation Scores', fontsize=12)
-    axes[1, 1].set_xlabel('Fold', fontsize=11)
-    axes[1, 1].set_ylabel('Accuracy', fontsize=11)
-    axes[1, 1].legend()
-    plt.tight_layout()
-    plt.savefig('financial_timeseries_classification.png', dpi=300)
-    plt.close()
+        axes[1, 1].plot(range(1, len(scores) + 1), scores, 'o-', linewidth=2)
+        axes[1, 1].axhline(y=np.mean(scores), color='r', linestyle='--',
+                          label=f'Mean: {np.mean(scores):.4f}')
+        axes[1, 1].set_title('Cross-Validation Scores', fontsize=12)
+        axes[1, 1].set_xlabel('Fold', fontsize=11)
+        axes[1, 1].set_ylabel('Accuracy', fontsize=11)
+        axes[1, 1].legend()
+        plt.tight_layout()
+        plt.savefig('financial_timeseries_classification.png', dpi=300)
+        plt.close()
     logger.info("   Saved visualization to 'financial_timeseries_classification.png'")
     
     logger.info("\n" + "=" * 60)
