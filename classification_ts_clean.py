@@ -27,9 +27,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 # Configuration
-plt.rcParams['axes.spines.top'] = False
-plt.rcParams['axes.spines.right'] = False
-plt.rcParams['figure.facecolor'] = 'white'
 np.random.seed(config.get('data', {}).get('seed', 42))
 
 # Generate synthetic time series (random walk with drift)
