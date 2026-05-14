@@ -296,9 +296,7 @@ def create_market_state_labels(df, window=20):
 
 def main(plot: bool = False):
     """Run complete example."""
-    logger.info("=" * 60)
     logger.info("Financial Time Series Classification")
-    logger.info("=" * 60)
     
     # Generate data
     logger.info("\n1. Generating synthetic financial data...")
@@ -397,9 +395,7 @@ def main(plot: bool = False):
         plt.close()
     logger.info("   Saved visualization to 'financial_timeseries_classification.png'")
     
-    logger.info("\n" + "=" * 60)
-    logger.info("Example completed successfully!")
-    logger.info("=" * 60)
+    logger.info("=== Example completed successfully! ===")
 
 
 if __name__ == "__main__":
