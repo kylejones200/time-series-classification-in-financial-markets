@@ -98,7 +98,7 @@ def chrono_classification(df: pd.DataFrame, cfg: Config):
         accs.append(accuracy_score(y_te, pred))
         try:
             aucs.append(roc_auc_score(y_te, proba))
-        except Exception:
+        except ValueError:
             pass
     return float(np.mean(accs)), (float(np.mean(aucs)) if aucs else np.nan)
 
