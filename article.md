@@ -6,11 +6,11 @@ Time series classification in financial markets presents unique challenges that 
 
 Financial time series classification must handle:
 
-- **Variable-length sequences** (irregular trading patterns)
-- **Temporal dependencies** (market momentum and trends)
-- **Phase shifts** (similar patterns occurring at different speeds)
-- **Non-stationary behavior** (changing market regimes)
-- **High noise-to-signal ratio** (market microstructure noise)
+- Variable-length sequences (irregular trading patterns)
+- Temporal dependencies (market momentum and trends)
+- Phase shifts (similar patterns occurring at different speeds)
+- Non-stationary behavior (changing market regimes)
+- High noise-to-signal ratio (market microstructure noise)
 
 ## Data Handling for Financial Time Series
 
@@ -29,10 +29,10 @@ Financial time series classification must handle:
 
 Feature engineering for time series extends beyond basic statistical measures to capture complex temporal patterns. This involves:
 
-- **Time-domain features:** Mean, variance, skewness, kurtosis
-- **Frequency-domain features:** FFT coefficients, power spectral density
-- **Shape-based features:** Peaks, troughs, crossings
-- **Temporal features:** Autocorrelation and partial autocorrelation
+- Time-domain features: Mean, variance, skewness, kurtosis
+- Frequency-domain features: FFT coefficients, power spectral density
+- Shape-based features: Peaks, troughs, crossings
+- Temporal features: Autocorrelation and partial autocorrelation
 
 
 ### B. Distance-Based Methods
@@ -62,11 +62,11 @@ We use different metrics for evaluating time series classification than traditio
 
 Best practices in financial time series classification extend beyond basic implementation to encompass comprehensive system design and risk management principles. These practices address three critical areas:
 
-1. **Data quality management**: Financial data must be cleaned and validated before processing, with particular attention to survivorship bias, look-ahead bias, and market microstructure effects.
+1. Data quality management: Financial data must be cleaned and validated before processing, with particular attention to survivorship bias, look-ahead bias, and market microstructure effects.
 
-2. **Model selection and validation**: Cross-validation must respect time ordering to prevent future data leakage, and performance metrics should focus on financial rather than purely statistical measures.
+2. Model selection and validation: Cross-validation must respect time ordering to prevent future data leakage, and performance metrics should focus on financial rather than purely statistical measures.
 
-3. **Production deployment considerations**: Real-time classification systems must handle market data streams efficiently, manage memory usage effectively, and maintain low latency in signal generation.
+3. Production deployment considerations: Real-time classification systems must handle market data streams efficiently, manage memory usage effectively, and maintain low latency in signal generation.
 
 ## Complete Implementation
 

@@ -7,15 +7,15 @@ Time series classification in financial markets presents unique challenges that 
 ## Challenges in Financial Time Series Classification
 
 Financial time series classification must handle:
-- **Variable-length sequences** (irregular trading patterns)
-- **Temporal dependencies** (market momentum and trends)
-- **Phase shifts** (similar patterns occurring at different speeds)
-- **Non-stationary behavior** (changing market regimes)
-- **High noise-to-signal ratio** (market microstructure noise)
+- Variable-length sequences (irregular trading patterns)
+- Temporal dependencies (market momentum and trends)
+- Phase shifts (similar patterns occurring at different speeds)
+- Non-stationary behavior (changing market regimes)
+- High noise-to-signal ratio (market microstructure noise)
 
 ## Data Handling for Financial Time Series
 
-⚠️ **Note**: Production code requires actual financial data. This article demonstrates concepts with synthetic data.
+⚠️ Note: Production code requires actual financial data. This article demonstrates concepts with synthetic data.
 
 ### Loading Financial Data
 
@@ -220,13 +220,13 @@ def calculate_sharpe_ratio(returns, risk_free_rate=0.02):
 
 ## Data Requirements
 
-⚠️ **Production Use**: Requires actual financial data from:
+⚠️ Production Use: Requires actual financial data from:
 
 ### Data Sources
-- **Yahoo Finance**: https://finance.yahoo.com/
-- **Alpha Vantage**: https://www.alphavantage.co/
-- **Quandl**: https://www.quandl.com/
-- **IEX Cloud**: https://iexcloud.io/
+- Yahoo Finance: https://finance.yahoo.com/
+- Alpha Vantage: https://www.alphavantage.co/
+- Quandl: https://www.quandl.com/
+- IEX Cloud: https://iexcloud.io/
 
 ### Expected Format
 CSV with columns: `timestamp`, `open`, `high`, `low`, `close`, `volume`
@@ -251,18 +251,18 @@ CSV with columns: `timestamp`, `open`, `high`, `low`, `close`, `volume`
 ## Key Takeaways
 
 Time series classification in financial markets requires:
-- **Specialized preprocessing**: Handle market hours, corporate actions
-- **Domain-specific features**: Technical indicators, market microstructure
-- **Robust backtesting**: Transaction costs, slippage, realistic assumptions
-- **Risk management**: Position limits, drawdown protection
+- Specialized preprocessing: Handle market hours, corporate actions
+- Domain-specific features: Technical indicators, market microstructure
+- Robust backtesting: Transaction costs, slippage, realistic assumptions
+- Risk management: Position limits, drawdown protection
 
 ## Further Resources
 
-- **Quantopian Lectures**: https://www.quantopian.com/lectures
-- **QuantLib**: https://www.quantlib.org/
-- **Zipline**: https://www.zipline.io/
-- **TA-Lib**: https://ta-lib.org/
+- Quantopian Lectures: https://www.quantopian.com/lectures
+- QuantLib: https://www.quantlib.org/
+- Zipline: https://www.zipline.io/
+- TA-Lib: https://ta-lib.org/
 
 ---
 
-**Note**: This article provides educational examples. Real trading requires extensive testing, risk management, and regulatory compliance.
+Note: This article provides educational examples. Real trading requires extensive testing, risk management, and regulatory compliance.
