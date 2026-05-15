@@ -27,7 +27,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 # Configuration
-np.random.seed(config.get('data', {}).get('seed', 42))
+np.random.seed(42)
 
 # Generate synthetic time series (random walk with drift)
 n_samples = 500
