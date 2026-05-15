@@ -1,23 +1,23 @@
-import signalplot
+import logging
+from dataclasses import dataclass
+from pathlib import Path
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from pathlib import Path
-from dataclasses import dataclass
-from sklearn.model_selection import TimeSeriesSplit
-from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import Pipeline
+import signalplot
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, roc_auc_score
+from sklearn.model_selection import TimeSeriesSplit
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
-import logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 np.random.seed(42)
-signalplot.apply(font_family='serif')
+signalplot.apply(font_family="serif")
 
 
 @dataclass
@@ -28,31 +28,35 @@ class Config:
     season: int = 12
     max_lag: int = 12
 
-def load_config(config_path=None) -> 'Config':
+
+def load_config(config_path=None) -> "Config":
     """Build Config from config.yaml, falling back to dataclass defaults."""
     if config_path is None:
-        config_path = Path(__file__).parent / 'config.yaml'
+        config_path = Path(__file__).parent / "config.yaml"
     if not config_path.exists():
         return Config()
     with open(config_path) as _f:
         import yaml as _yaml
-        raw = _yaml.safe_load(_f) or {}
-    _d = raw.get('data', {})
-    _m = raw.get('model', {})
-    _o = raw.get('output', {})
-    return Config(
-        csv_path=_d.get('input_file', '2001-2025 Net_generation_United_States_all_sectors_monthly.csv'),
-        freq=_d.get('freq', 'MS'),
-        n_splits=_d.get('n_splits', 5),
-        season=_m.get('season', 12),
-        max_lag=_m.get('max_lag', 12),
-    )
 
+        raw = _yaml.safe_load(_f) or {}
+    _d = raw.get("data", {})
+    _m = raw.get("model", {})
+    _o = raw.get("output", {})
+    return Config(
+        csv_path=_d.get(
+            "input_file",
+            "2001-2025 Net_generation_United_States_all_sectors_monthly.csv",
+        ),
+        freq=_d.get("freq", "MS"),
+        n_splits=_d.get("n_splits", 5),
+        season=_m.get("season", 12),
+        max_lag=_m.get("max_lag", 12),
+    )
 
 
 def load_series(cfg: Config) -> pd.Series:
     p = Path(cfg.csv_path)
-    df = pd.read_csv(p, header=None, usecols=[0,1], names=["date","value"], sep=",")
+    df = pd.read_csv(p, header=None, usecols=[0, 1], names=["date", "value"], sep=",")
     df["date"] = pd.to_datetime(df["date"], format="%Y-%m-%d", errors="coerce")
     df["value"] = pd.to_numeric(df["value"], errors="coerce")
     s = df.dropna().sort_values("date").set_index("date")["value"].asfreq(cfg.freq)
@@ -60,39 +64,38 @@ def load_series(cfg: Config) -> pd.Series:
 
 
 def build_supervised(s: pd.Series, max_lag: int, season: int) -> pd.DataFrame:
-    df = pd.DataFrame({'y': s})
+    df = pd.DataFrame({"y": s})
     # Lags
     for k in range(1, max_lag + 1):
-        df[f'lag{k}'] = df['y'].shift(k)
+        df[f"lag{k}"] = df["y"].shift(k)
     # Seasonal naive
-    df['season_lag'] = df['y'].shift(season)
+    df["season_lag"] = df["y"].shift(season)
     # Calendar features
     m = df.index.month
-    df['sin12'] = np.sin(2 * np.pi * m / 12.0)
-    df['cos12'] = np.cos(2 * np.pi * m / 12.0)
+    df["sin12"] = np.sin(2 * np.pi * m / 12.0)
+    df["cos12"] = np.cos(2 * np.pi * m / 12.0)
     # Next-month direction label (binary)
-    df['y_next'] = df['y'].shift(-1)
-    df['up'] = (df['y_next'] > df['y']).astype(int)
+    df["y_next"] = df["y"].shift(-1)
+    df["up"] = (df["y_next"] > df["y"]).astype(int)
     df = df.dropna()
     return df
 
 
 def chrono_classification(df: pd.DataFrame, cfg: Config):
-    features = [c for c in df.columns if c not in ('y','y_next','up')]
+    features = [c for c in df.columns if c not in ("y", "y_next", "up")]
     X = df[features].values
-    y = df['up'].values
+    y = df["up"].values
     idx = np.arange(len(df))
     tscv = TimeSeriesSplit(n_splits=cfg.n_splits)
     accs, aucs = [], []
     for tr, te in tscv.split(idx):
         X_tr, X_te = X[tr], X[te]
         y_tr, y_te = y[tr], y[te]
-        pipe = Pipeline([
-            ('scaler', StandardScaler()),
-            ('clf', LogisticRegression(max_iter=1000))
-        ])
+        pipe = Pipeline(
+            [("scaler", StandardScaler()), ("clf", LogisticRegression(max_iter=1000))]
+        )
         pipe.fit(X_tr, y_tr)
-        proba = pipe.predict_proba(X_te)[:,1]
+        proba = pipe.predict_proba(X_te)[:, 1]
         pred = (proba >= 0.5).astype(int)
         accs.append(accuracy_score(y_te, pred))
         try:
@@ -112,10 +115,11 @@ def main(plot: bool = False):
     # Simple visualization of last 3 years with predicted direction baseline (seasonal naive)
     tail = s.tail(36)
     if plot:
-        plt.figure(figsize=(9,4))
-        plt.plot(tail.index, tail.values, label='EIA')
+        plt.figure(figsize=(9, 4))
+        plt.plot(tail.index, tail.values, label="EIA")
         plt.legend()
-        signalplot.save('eia_cls_updown.png')
+        signalplot.save("eia_cls_updown.png")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
