@@ -1,6 +1,9 @@
 # Description: Short example for Time Series Classification in Financial Markets.
 
 
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader, TensorDataset
 import logging
 
 import matplotlib.pyplot as plt
@@ -11,7 +14,6 @@ from data_io import read_csv
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import TimeSeriesSplit
-from tensorflow import keras
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
@@ -167,7 +169,7 @@ class FinancialClassificationBacktest:
             features = extract_financial_features(window_data)
 
             # Make prediction
-            prediction = self.model.predict(features.values[-1].reshape(1, -1))
+            prediction = self._predict_torch(model, features.values[-1].reshape(1, -1))
             position = self.determine_position(prediction)
 
             # Calculate returns with costs
@@ -338,7 +340,7 @@ def main(plot: bool = False):
         X_train, X_test = X[train_idx], X[test_idx]
         y_train, y_test = y[train_idx], y[test_idx]
 
-        model.fit(X_train, y_train)
+        _train_torch(model, X_train, y_train)
         score = model.score(X_test, y_test)
         pd.concat([scores, score])
         logger.info(f"   Fold {fold} accuracy: {score:.4f}")
@@ -347,7 +349,7 @@ def main(plot: bool = False):
 
     # Final evaluation
     train_idx, test_idx = list(tscv.split(X))[-1]
-    y_pred = model.predict(X[test_idx])
+    y_pred = _predict_torch(model, X[test_idx])
 
     logger.info("\n5. Classification Report:")
     logger.info(
