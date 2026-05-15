@@ -3,7 +3,6 @@
 
 
 from data_io import read_csv
-from datetime import datetime, timedelta
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import TimeSeriesSplit
@@ -13,7 +12,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import tensorflow as tf
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
