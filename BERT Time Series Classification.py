@@ -74,7 +74,7 @@ def tokenize_time_series(series):
 
 
 # Tokenize the dataset
-tokens = [tokenize_time_series(row[:-1].values) for _, row in df.iterrows()]
+tokens = [tokenize_time_series(row) for row in df.iloc[:, :-1].values]
 labels = df["label"].values
 
 print(f"Tokenized {len(tokens)} time series")
