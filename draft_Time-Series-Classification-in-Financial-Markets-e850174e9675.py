@@ -174,8 +174,8 @@ class FinancialClassificationBacktest:
 
             # Calculate returns with costs
             returns = self.calculate_returns(position, i)
-            self.pd.concat([positions, position])
-            self.pd.concat([returns, returns])
+            self.positions.append(position)
+            self.returns.append(returns)
 
         return self.analyze_performance()
 
@@ -342,7 +342,7 @@ def main(plot: bool = False):
 
         _train_torch(model, X_train, y_train)
         score = model.score(X_test, y_test)
-        pd.concat([scores, score])
+        scores.append(score)
         logger.info(f"   Fold {fold} accuracy: {score:.4f}")
 
     logger.info(f"\n   Average accuracy: {np.mean(scores):.4f} ± {np.std(scores):.4f}")
