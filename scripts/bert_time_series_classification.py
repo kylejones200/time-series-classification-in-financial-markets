@@ -34,7 +34,7 @@ def tokenize_time_series(series):
     )
 
 
-def main() -> None:
+def main_step_001() -> None:
     os.environ["WANDB_DISABLED"] = "true"
 
     np.random.seed(42)
@@ -113,6 +113,10 @@ def main() -> None:
     accuracy = accuracy_score(test_labels, predicted_labels)
 
     print(f"\n✓ Test Accuracy: {accuracy:.2%}")
+
+
+def main() -> None:
+    main_step_001()
 
 
 if __name__ == "__main__":
