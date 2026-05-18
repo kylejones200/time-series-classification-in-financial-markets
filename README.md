@@ -5,6 +5,10 @@ Medium: [Time Series Classification in Financial Markets](https://medium.com/@ky
 
 Random-forest direction classification on a synthetic financial-style time series (lag features, temporal train/test split). Companion code for the article (`article.md`).
 
+## Business context
+
+Time series classification in financial markets presents unique challenges that distinguish it from traditional classification problems. Market data exhibits complex characteristics, including non-stationarity, high noise levels, and regime changes. Whether identifying market states, detecting trading patterns, or classifying market anomalies, we need specialized approaches that account for these financial market dynamics.
+
 ## Quick start
 
 Requires [uv](https://docs.astral.sh/uv/).
