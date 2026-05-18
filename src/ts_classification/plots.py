@@ -40,16 +40,13 @@ def save_classification_plots(
     figsize = tuple(out_cfg.get("figsize", [14, 10]))
     show = bool(out_cfg.get("show", False))
     (analysis_path, proba_path), dpi = _figure_paths(cfg)
-
     features = FEATURE_COLUMNS
     y_test = result.y_test
     y_pred = result.y_pred
     y_pred_proba = result.y_pred_proba
     acc = result.accuracy
     clf = result.clf
-
     fig, axes = plt.subplots(2, 2, figsize=figsize)
-
     axes[0, 0].plot(
         df.index[:split_idx],
         df["value"][:split_idx],
@@ -68,7 +65,6 @@ def save_classification_plots(
     axes[0, 0].set_title("Time Series with Train/Test Split", fontsize=12)
     axes[0, 0].legend()
     axes[0, 0].set_ylabel("Value")
-
     test_indices = test_df.index
     correct = y_test == y_pred
     incorrect = ~correct
@@ -92,7 +88,6 @@ def save_classification_plots(
     axes[0, 1].legend()
     axes[0, 1].set_ylabel("Value")
     axes[0, 1].set_xlabel("Index")
-
     cm = confusion_matrix(y_test, y_pred)
     sns.heatmap(
         cm,
@@ -107,7 +102,6 @@ def save_classification_plots(
     axes[1, 0].set_title("Confusion Matrix", fontsize=12)
     axes[1, 0].set_ylabel("Actual")
     axes[1, 0].set_xlabel("Predicted")
-
     importances = clf.feature_importances_
     feature_imp_df = pd.DataFrame({"feature": features, "importance": importances}).sort_values(
         "importance", ascending=True
@@ -120,7 +114,6 @@ def save_classification_plots(
     )
     axes[1, 1].set_title("Feature Importance", fontsize=12)
     axes[1, 1].set_xlabel("Importance")
-
     plt.tight_layout()
     fig.savefig(analysis_path, dpi=dpi, bbox_inches="tight")
     if show:

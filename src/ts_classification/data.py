@@ -21,7 +21,6 @@ def make_synthetic_series(cfg: dict[str, Any]) -> pd.Series:
     data_cfg = cfg.get("data") or {}
     seed = int(data_cfg.get("seed", 42))
     n_samples = int(data_cfg.get("n_samples", 500))
-
     rng = np.random.default_rng(seed)
     return pd.Series(np.cumsum(rng.standard_normal(n_samples) + 0.1))
 

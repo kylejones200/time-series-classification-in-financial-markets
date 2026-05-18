@@ -29,33 +29,25 @@ def run(config_path: Path | str | None = None) -> dict[str, Any]:
     path = Path(config_path) if config_path else DEFAULT_CONFIG_PATH
     cfg = load_config(path)
     configure_logging(cfg)
-
     series = make_synthetic_series(cfg)
     df = build_feature_frame(series)
-
     data_cfg = cfg.get("data") or {}
     train_ratio = float(data_cfg.get("train_ratio", 0.8))
     train_df, test_df, split_idx = temporal_train_test_split(df, train_ratio)
-
     X_train = train_df[FEATURE_COLUMNS]
     y_train = train_df["target"]
     X_test = test_df[FEATURE_COLUMNS]
     y_test = test_df["target"]
-
     result = train_classifier(X_train, y_train, X_test, y_test, cfg)
-
     logger.info("Accuracy: %.3f", result.accuracy)
     logger.info("Train samples: %d | Test samples: %d", len(X_train), len(X_test))
     logger.info("Class distribution - Train: %s", y_train.value_counts().to_dict())
     logger.info("Class distribution - Test:  %s", y_test.value_counts().to_dict())
     logger.info("Classification Report:\n%s", result.report)
-
     figures = save_classification_plots(df, split_idx, test_df, result, cfg)
-
     out_cfg = cfg.get("output") or {}
     results_path = resolve_project_path(out_cfg.get("results_path", "outputs/results.json"))
     results_path.parent.mkdir(parents=True, exist_ok=True)
-
     payload = {
         "version": __version__,
         "accuracy": result.accuracy,
@@ -65,7 +57,6 @@ def run(config_path: Path | str | None = None) -> dict[str, Any]:
     }
     results_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     logger.info("Wrote %s", results_path)
-
     return {"df": df, "result": result, "figures": figures, "results_path": results_path}
 
 

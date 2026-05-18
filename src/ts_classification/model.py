@@ -33,12 +33,10 @@ def train_classifier(
         random_state=int(model_cfg.get("random_state", 42)),
     )
     clf.fit(X_train, y_train)
-
     y_pred = clf.predict(X_test)
     y_pred_proba = clf.predict_proba(X_test)[:, 1]
     accuracy = accuracy_score(y_test, y_pred)
     report = classification_report(y_test, y_pred, target_names=["Down", "Up"])
-
     return ClassificationResult(
         clf=clf,
         accuracy=accuracy,

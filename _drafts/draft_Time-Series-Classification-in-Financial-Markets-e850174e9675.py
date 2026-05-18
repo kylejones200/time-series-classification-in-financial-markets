@@ -49,7 +49,6 @@ class RiskManager:
     def __init__(self, max_position=1.0, max_drawdown=0.02):
         """
         Initialize risk parameters.
-
         Parameters:
         -----------
         max_position : float
@@ -64,7 +63,6 @@ class RiskManager:
     def validate_trade(self, prediction, current_position, current_equity):
         """
         Validate and size trades based on risk parameters.
-
         Returns:
         --------
         float
@@ -241,47 +239,26 @@ def normalize_financial_data(df):
 
 def generate_data() -> None:
     "Run complete example."
-
     logger.info("Financial Time Series Classification")
-
     logger.info("\n1. Generating synthetic financial data...")
-
     df = generate_financial_data(n_days=500)
-
     logger.info(f"   Generated {len(df)} days of data")
-
     logger.info("\n2. Creating market state labels...")
-
     labels = create_market_state_labels(df, window=20)
-
     df["label"] = labels
-
     df = df.dropna()
-
     logger.info(f"   Class distribution: {df['label'].value_counts().to_dict()}")
-
     logger.info("\n3. Extracting financial features...")
-
     features_df = extract_financial_features(df)
-
     features_df = features_df.dropna()
-
     common_idx = features_df.index.intersection(df.index)
-
     X = features_df.loc[common_idx].values
-
     y = df.loc[common_idx]["label"].values
-
     logger.info(f"   Feature matrix shape: {X.shape}")
-
     logger.info("\n4. Training classification model...")
-
     tscv = TimeSeriesSplit(n_splits=5)
-
     model = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
-
     scores = []
-
     for fold, (train_idx, test_idx) in enumerate(tscv.split(X), 1):
         X_train, X_test = (X[train_idx], X[test_idx])
         y_train, y_test = (y[train_idx], y[test_idx])
@@ -291,17 +268,11 @@ def generate_data() -> None:
         logger.info(f"   Fold {fold} accuracy: {score:.4f}")
 
     logger.info(f"\n   Average accuracy: {np.mean(scores):.4f} ± {np.std(scores):.4f}")
-
     train_idx, test_idx = list(tscv.split(X))[-1]
-
     y_pred = _predict_torch(model, X[test_idx])
-
     logger.info("\n5. Classification Report:")
-
     logger.info(classification_report(y[test_idx], y_pred, target_names=["Bearish", "Bullish"]))
-
     logger.info("\n6. Creating visualizations...")
-
     if plot:
         fig, axes = plt.subplots(2, 2, figsize=(14, 10))
         axes[0, 0].plot(df["timestamp"], df["close"], alpha=0.7, linewidth=1)
@@ -361,7 +332,6 @@ def generate_data() -> None:
         plt.close()
 
     logger.info("   Saved visualization to 'financial_timeseries_classification.png'")
-
     logger.info("=== Example completed successfully! ===")
 
 

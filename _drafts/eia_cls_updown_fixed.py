@@ -12,9 +12,7 @@ from sklearn.model_selection import TimeSeriesSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 np.random.seed(42)
 signalplot.apply(font_family="serif")
@@ -91,9 +89,7 @@ def chrono_classification(df: pd.DataFrame, cfg: Config):
     for tr, te in tscv.split(idx):
         X_tr, X_te = X[tr], X[te]
         y_tr, y_te = y[tr], y[te]
-        pipe = Pipeline(
-            [("scaler", StandardScaler()), ("clf", LogisticRegression(max_iter=1000))]
-        )
+        pipe = Pipeline([("scaler", StandardScaler()), ("clf", LogisticRegression(max_iter=1000))])
         pipe.fit(X_tr, y_tr)
         proba = pipe.predict_proba(X_te)[:, 1]
         pred = (proba >= 0.5).astype(int)
@@ -111,7 +107,6 @@ def main(plot: bool = False):
     df = build_supervised(s, cfg.max_lag, cfg.season)
     acc, auc = chrono_classification(df, cfg)
     logger.info(f"Up/Down classification — Accuracy: {acc:.4f}, AUC: {auc:.4f}")
-
     # Simple visualization of last 3 years with predicted direction baseline (seasonal naive)
     tail = s.tail(36)
     if plot:
