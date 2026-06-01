@@ -46,3 +46,8 @@ classification_probabilities.png
 financial_timeseries_classification.png
 results/
 logs/
+# macOS metadata on external volumes
+._*
+.AppleDouble
+# Backup files (may contain secrets)
+*.bak
