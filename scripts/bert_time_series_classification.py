@@ -1,6 +1,6 @@
-"""Generated from Jupyter notebook: BERT for Time Series Classification
+"""BERT for time series classification in financial markets."""
 
-Magics and shell lines are commented out. Run with a normal Python interpreter."""
+from __future__ import annotations
 
 import os
 
@@ -26,11 +26,14 @@ class TimeSeriesDataset(torch.utils.data.Dataset):
         return item
 
 
-def tokenize_time_series(series):
-    """Convert numerical time series to tokenized text"""
-    series_str = " ".join(map(str, series))
+def tokenize_time_series(tokenizer, series):
+    series_str = " ".join(f"{v:.4f}" for v in series)
     return tokenizer(
-        series_str, truncation=True, padding="max_length", max_length=128, return_tensors="pt"
+        series_str,
+        truncation=True,
+        padding="max_length",
+        max_length=128,
+        return_tensors="pt",
     )
 
 
@@ -45,42 +48,38 @@ def main_step_001() -> None:
     y = np.array([0] * (n_samples // 2) + [1] * (n_samples // 2))
     df = pd.DataFrame(X)
     df["label"] = y
-    print("Dataset shape:", df.shape)
-    print("\nFirst few rows:")
-    print(df.head())
-    print("\nClass distribution:")
-    print(df["label"].value_counts())
-    AutoTokenizer.from_pretrained("bert-base-uncased")
-    tokens = [tokenize_time_series(row) for row in df.iloc[:, :-1].values]
+
+    tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+    tokens = [tokenize_time_series(tokenizer, row) for row in df.iloc[:, :-1].values]
     labels = df["label"].values
-    print(f"Tokenized {len(tokens)} time series")
     train_tokens, test_tokens, train_labels, test_labels = train_test_split(
         tokens, labels, test_size=0.2, random_state=42
     )
     train_dataset = TimeSeriesDataset(train_tokens, train_labels)
     test_dataset = TimeSeriesDataset(test_tokens, test_labels)
-    print(f"Training samples: {len(train_dataset)}")
-    print(f"Test samples: {len(test_dataset)}")
+
     model = BertForSequenceClassification.from_pretrained("bert-base-uncased", num_labels=2)
     training_args = TrainingArguments(
         output_dir="./outputs/bert_checkpoints",
-        num_train_epochs=3,
-        per_device_train_batch_size=16,
-        save_steps=10,
-        save_total_limit=2,
-        logging_dir="./outputs/bert_logs",
-        logging_steps=10,
+        num_train_epochs=1,
+        per_device_train_batch_size=8,
+        save_steps=50,
+        save_total_limit=1,
+        logging_steps=20,
         report_to="none",
+        eval_strategy="no",
     )
     trainer = Trainer(
-        model=model, args=training_args, train_dataset=train_dataset, eval_dataset=test_dataset
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        eval_dataset=test_dataset,
     )
-    print("Training BERT model...")
     trainer.train()
     predictions = trainer.predict(test_dataset)
     predicted_labels = np.argmax(predictions.predictions, axis=1)
     accuracy = accuracy_score(test_labels, predicted_labels)
-    print(f"\n✓ Test Accuracy: {accuracy:.2%}")
+    print(f"Test accuracy: {accuracy:.2%}")
 
 
 def main() -> None:
